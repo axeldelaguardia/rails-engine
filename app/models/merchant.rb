@@ -1,5 +1,4 @@
 class Merchant < ApplicationRecord
-  enum status: [ "disabled", "active" ]
   has_many :items
 
 	scope :active_merchants, -> { where(status: 1) }

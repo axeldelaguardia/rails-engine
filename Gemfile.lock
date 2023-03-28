@@ -93,6 +93,8 @@ GEM
     io-console (0.6.0)
     irb (1.6.3)
       reline (>= 0.3.0)
+    jsonapi-serializer (2.2.0)
+      activesupport (>= 4.2)
     loofah (2.19.1)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -193,12 +195,14 @@ GEM
 
 PLATFORMS
   x86_64-darwin-21
+  x86_64-darwin-22
 
 DEPENDENCIES
   bootsnap
   debug
   factory_bot_rails
   faker
+  jsonapi-serializer
   pg (~> 1.1)
   pry
   puma (~> 5.0)
@@ -209,7 +213,7 @@ DEPENDENCIES
   tzinfo-data
 
 RUBY VERSION
-   ruby 2.7.2p137
+   ruby 3.1.1p18
 
 BUNDLED WITH
    2.4.8
