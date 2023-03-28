@@ -1,5 +1,6 @@
 class Merchant < ApplicationRecord
   has_many :items
+	has_many :invoices
 
 	scope :active_merchants, -> { where(status: 1) }
 	scope :disabled_merchants, -> { where(status: 0) }

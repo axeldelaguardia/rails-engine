@@ -8,6 +8,12 @@
           1,
           1,
           1,
+          1,
+          1,
+          null,
+          1,
+          2,
+          null,
           null
         ]
       },
@@ -31,6 +37,7 @@
       },
       "/Users/axeld/Documents/turing/3mod/projects/rails-engine/app/models/merchant.rb": {
         "lines": [
+          1,
           1,
           1,
           null,
@@ -511,6 +518,33 @@
           null
         ]
       },
+      "/Users/axeld/Documents/turing/3mod/projects/rails-engine/app/models/customer.rb": {
+        "lines": [
+          1,
+          1,
+          null
+        ]
+      },
+      "/Users/axeld/Documents/turing/3mod/projects/rails-engine/app/models/invoice.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          null,
+          null,
+          null
+        ]
+      },
+      "/Users/axeld/Documents/turing/3mod/projects/rails-engine/app/models/invoice_item.rb": {
+        "lines": [
+          1,
+          1,
+          1,
+          null
+        ]
+      },
       "/Users/axeld/Documents/turing/3mod/projects/rails-engine/app/controllers/api/v1/items_controller.rb": {
         "lines": [
           1,
@@ -539,6 +573,8 @@
           null,
           null,
           null,
+          1,
+          1,
           1,
           1,
           null,
@@ -639,12 +675,6 @@
           2,
           null,
           2,
-          null,
-          null,
-          null,
-          null,
-          null,
-          null,
           2,
           null,
           2,
@@ -662,6 +692,6 @@
         ]
       }
     },
-    "timestamp": 1680031124
+    "timestamp": 1680039248
   }
 }
