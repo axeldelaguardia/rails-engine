@@ -85,7 +85,7 @@ describe "Items API" do
 			expect(response).to have_http_status(404)
 			
 			response_body = JSON.parse(response.body, symbolize_names: true)
-
+			
 			expect(response_body).to have_key(:message)
 			expect(response_body[:message]).to be_a(String)
 			expect(response_body[:message]).to eq("your query could not be completed")
@@ -289,6 +289,56 @@ describe "Items API" do
 			patch "/api/v1/items/#{item.id}", headers: headers, params: JSON.generate(item: item_params)
 
 			expect(response).to have_http_status(404)
+
+			response_body = JSON.parse(response.body, symbolize_names: true)
+
+			expect(response_body).to have_key(:message)
+			expect(response_body[:message]).to be_a(String)
+			expect(response_body[:message]).to eq("your query could not be completed")
+
+			expect(response_body).to have_key(:errors)
+			expect(response_body[:errors]).to be_an(Array)
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+			end
+
+			expect(response_body[:errors].first[:merchant]).to eq("required")
+		end
+
+		it "returns status 404 when wrong item id used" do
+			merchant = create(:merchant)
+			item = create(:item, merchant: merchant)
+
+			item_params = ({
+				name: "Updated Item",
+				merchant_id: "string"
+			})
+
+			headers = {"CONTENT_TYPE" => "application/json"}
+			
+			expect(item.name).to_not eq(item_params[:name])
+			expect(item.description).to_not eq(item_params[:description])
+			expect(item.unit_price).to_not eq(item_params[:unit_price])
+
+			patch "/api/v1/items/#{Item.last.id + 1}", headers: headers, params: JSON.generate(item: item_params)
+
+			expect(response).to have_http_status(404)
+
+			response_body = JSON.parse(response.body, symbolize_names: true)
+
+			expect(response_body).to have_key(:message)
+			expect(response_body[:message]).to be_a(String)
+			expect(response_body[:message]).to eq("your query could not be completed")
+
+			expect(response_body).to have_key(:errors)
+			expect(response_body[:errors]).to be_an(Array)
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+			end
+
+			expect(response_body[:errors].first[:message]).to eq("Couldn't find Item with 'id'=#{Item.last.id + 1}")
 		end
 	end
 

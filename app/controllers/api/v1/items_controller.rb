@@ -31,11 +31,16 @@ class Api::V1::ItemsController < ApplicationController
 	end
 
 	def update
-		item = Item.find(params[:id])
-		if item.update(item_params)
-			render json: ItemSerializer.new(item), status: 202
+		begin
+			item = Item.find(params[:id])
+		rescue ActiveRecord::RecordNotFound => e
+			render json: ErrorIdSerializer.new(e).serialized_json, status: 404
 		else
-			render json: ItemErrorSerializer.new(item).serialized_json, status: 404
+			if item.update(item_params)
+				render json: ItemSerializer.new(item), status: 202
+			else
+				render json: ItemErrorSerializer.new(item).serialized_json, status: 404
+			end
 		end
 	end
 
