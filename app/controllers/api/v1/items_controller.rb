@@ -1,10 +1,6 @@
 class Api::V1::ItemsController < ApplicationController
 	def index
-		if params[:merchant_id]
-			merchant_error_handler(params[:merchant_id])
-		else
-			render json: ItemSerializer.new(Item.all)
-		end
+		render json: ItemSerializer.new(Item.all)
 	end
 
 	def show
@@ -47,15 +43,5 @@ class Api::V1::ItemsController < ApplicationController
 	private
 	def item_params
 		params.require(:item).permit(:name, :description, :unit_price, :merchant_id)
-	end
-
-	def merchant_error_handler(merchant_id)
-		begin
-			merchant = Merchant.find(merchant_id)
-		rescue ActiveRecord::RecordNotFound => e
-			render json: ErrorIdSerializer.new(e).serialized_json, status: 404
-		else
-			render json: ItemSerializer.new(merchant.items)
-		end
 	end
 end
