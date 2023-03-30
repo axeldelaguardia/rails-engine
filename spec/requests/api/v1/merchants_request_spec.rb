@@ -59,15 +59,22 @@ describe "Merchant API" do
 
 			expect(response).to have_http_status(404)
 			
-			message = JSON.parse(response.body, symbolize_names: true)
+			response_body = JSON.parse(response.body, symbolize_names: true)
 
-			expect(message).to have_key(:message)
-			expect(message[:message]).to eq("your query could not be completed")
-			expect(message).to have_key(:errors)
-			expect(message[:errors]).to be_an(Array)
-			expect(message[:errors].first).to be_a(Hash)
-			expect(message[:errors].first).to have_key(:message)
-			expect(message[:errors].first[:message]).to eq("Couldn't find Merchant with 'id'=1")
+			expect(response_body).to have_key(:message)
+			expect(response_body[:message]).to eq("your query could not be completed")
+			expect(response_body).to have_key(:errors)
+			expect(response_body[:errors]).to be_an(Array)
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+
+			expect(response_body[:errors].first[:status]).to eq("404")
+			expect(response_body[:errors].first[:title]).to eq("Couldn't find Merchant with 'id'=1")
 		end
 	end
 		

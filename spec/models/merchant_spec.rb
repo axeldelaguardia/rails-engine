@@ -10,7 +10,7 @@ RSpec.describe Merchant, type: :model do
 			merchant_1 = create(:merchant, name: "Red Star")
 			merchant_2 = create(:merchant)
 
-			found_merchant = Merchant.find_merchant("name", "red")
+			found_merchant = Merchant.find_merchant("red")
 			expect(found_merchant).to eq(merchant_1)
 			expect(found_merchant).to_not eq(merchant_2)
 		end
@@ -19,7 +19,7 @@ RSpec.describe Merchant, type: :model do
 			merchant_1 = create(:merchant, name: "Red Star")
 			merchant_2 = create(:merchant)
 
-			found_merchant = Merchant.find_merchant("name", "green")
+			found_merchant = Merchant.find_merchant("green")
 
 			expect(found_merchant).to eq(nil)
 		end

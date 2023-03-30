@@ -1,6 +1,7 @@
 class ErrorIdSerializer
-	def initialize(error_object)
+	def initialize(error_object, status)
 		@error_object = error_object
+		@status = status
 	end
 
 	def serialized_json
@@ -8,7 +9,8 @@ class ErrorIdSerializer
 			message: "your query could not be completed",
       errors: [
         {
-          message: @error_object.message,
+					status: @status.to_s,
+          title: @error_object.message,
         }
       ]
     }

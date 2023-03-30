@@ -1,5 +1,5 @@
 class Item < ApplicationRecord
-  belongs_to :merchant
+	belongs_to :merchant
 	has_many :invoice_items, dependent: :destroy
 	has_many :invoices, through: :invoice_items
 	validates :name, presence: true, format: { with: /\A[a-zA-Z\s\,\.]+\Z/i, message: "only allows letters and white spaces" }

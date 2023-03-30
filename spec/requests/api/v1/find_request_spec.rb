@@ -36,6 +36,36 @@ describe "Find API" do
 			end
 		end
 
+		it "sends a message if name fragment is empty" do
+			merchant = create(:merchant)
+			item_1 = create(:item, name: "Table Saw", merchant: merchant)
+			item_2 = create(:item, name: "Crosstable", merchant: merchant)
+			item_3 = create(:item, name: "Hammer", merchant: merchant)
+			item_4 = create(:item, name: "Turn Table", merchant: merchant)
+
+			get "/api/v1/items/find_all?name="
+			
+			expect(response).to have_http_status(400)
+			
+			response_body = JSON.parse(response.body, symbolize_names: true)
+			
+			expect(response_body).to have_key(:message)
+			expect(response_body[:message]).to be_a(String)
+			expect(response_body[:message]).to eq("your query could not be completed")
+			expect(response_body).to have_key(:errors)
+			expect(response_body[:errors]).to be_an(Array)
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+			
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("must include a name in query.")
+		end
+
 		it "can search by both min_price and max_price" do
 			item_1 = create(:item, unit_price: 4.99)
 			item_2 = create(:item, unit_price: 5.69)
@@ -45,7 +75,7 @@ describe "Find API" do
 			get "/api/v1/items/find_all?min_price=3.25&max_price=4.99"
 
 			expect(response).to be_successful
-
+		
 			items = JSON.parse(response.body, symbolize_names: true)
 
 			expect(items).to have_key(:data)
@@ -66,14 +96,14 @@ describe "Find API" do
 			end
 		end
 
-		it "can search by both min_price" do
+		it "can search by min_price" do
 			item_1 = create(:item, unit_price: 4.99)
 			item_2 = create(:item, unit_price: 5.69)
 			item_3 = create(:item, unit_price: 3.25)
 			item_4 = create(:item, unit_price: 2.99)
 
 			get "/api/v1/items/find_all?min_price=3.25"
-
+			
 			expect(response).to be_successful
 
 			items = JSON.parse(response.body, symbolize_names: true)
@@ -96,7 +126,7 @@ describe "Find API" do
 			end
 		end
 
-		it "can search by both max_price" do
+		it "can search by max_price" do
 			item_1 = create(:item, unit_price: 4.99)
 			item_2 = create(:item, unit_price: 5.69)
 			item_3 = create(:item, unit_price: 3.25)
@@ -142,17 +172,6 @@ describe "Find API" do
 			expect(items).to have_key(:data)
 			expect(items[:data]).to be_an(Array)
 			expect(items[:data]).to be_empty
-			# expect(items).to have_key(:message)
-			# expect(items[:message]).to be_a(String)
-			# expect(items[:message]).to eq("your query could not be completed")
-			# expect(items).to have_key(:errors)
-			# expect(items[:errors]).to be_an(Array)
-
-			# items[:errors].each do |error|
-			# 	expect(error).to be_a(String)
-			# end
-
-			# expect(items[:errors].first).to eq("no records found with that keyword")
 		end
 
 		it "sends message that cannot search by both name and max price" do
@@ -175,10 +194,14 @@ describe "Find API" do
 			expect(response_body[:errors]).to be_an(Array)
 
 			response_body[:errors].each do |error|
-				expect(error).to be_a(String)
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
 			end
-
-			expect(response_body[:errors].first).to eq("cannot search by both name and unit price")
+			
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("name and min/max price cannot be used together")
 		end
 
 		it "sends message that cannot search by both name and min price" do
@@ -201,10 +224,14 @@ describe "Find API" do
 			expect(response_body[:errors]).to be_an(Array)
 
 			response_body[:errors].each do |error|
-				expect(error).to be_a(String)
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
 			end
 
-			expect(response_body[:errors].first).to eq("cannot search by both name and unit price")
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("name and min/max price cannot be used together")
 		end
 
 		it "sends message that cannot search by both name, min price, and max price" do
@@ -227,10 +254,14 @@ describe "Find API" do
 			expect(response_body[:errors]).to be_an(Array)
 
 			response_body[:errors].each do |error|
-				expect(error).to be_a(String)
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
 			end
 
-			expect(response_body[:errors].first).to eq("cannot search by both name and unit price")
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("name and min/max price cannot be used together")
 		end
 
 		it "sends a message when min price is less than 0" do
@@ -253,10 +284,14 @@ describe "Find API" do
 			expect(response_body[:errors]).to be_an(Array)
 
 			response_body[:errors].each do |error|
-				expect(error).to be_a(String)
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
 			end
 
-			expect(response_body[:errors].first).to eq("min_price and max_price must be greater than or equal to 0")
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("min_price and max_price must be greater than or equal to 0")
 		end
 
 		it "sends a message when max price is less than 0" do
@@ -279,10 +314,44 @@ describe "Find API" do
 			expect(response_body[:errors]).to be_an(Array)
 
 			response_body[:errors].each do |error|
-				expect(error).to be_a(String)
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
 			end
 
-			expect(response_body[:errors].first).to eq("min_price and max_price must be greater than or equal to 0")
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("min_price and max_price must be greater than or equal to 0")
+		end
+
+		it "sends a message when price is not a float or integer" do
+			merchant = create(:merchant)
+			item_1 = create(:item, name: "Table Saw", merchant: merchant)
+			item_2 = create(:item, name: "Crosstable", merchant: merchant)
+			item_3 = create(:item, name: "Hammer", merchant: merchant)
+			item_4 = create(:item, name: "Turn Table", merchant: merchant)
+
+			get "/api/v1/items/find_all?min_price=abc"
+
+			expect(response).to have_http_status(400)
+
+			response_body = JSON.parse(response.body, symbolize_names: true)
+
+			expect(response_body).to have_key(:message)
+			expect(response_body[:message]).to be_a(String)
+			expect(response_body[:message]).to eq("your query could not be completed")
+			expect(response_body).to have_key(:errors)
+			expect(response_body[:errors]).to be_an(Array)
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("min or max price need to be an integer or a float.")
 		end
 	end
 
@@ -326,16 +395,52 @@ describe "Find API" do
 			expect(response_body[:data]).to be_empty
 		end
 
-		it "sends a message when parameter is missing" do
+		it "sends a message when parameter value is missing" do
 			get "/api/v1/merchants/find?name="
 
-			expect(response).to have_http_status(200)
+			expect(response).to have_http_status(400)
 			
 			response_body = JSON.parse(response.body, symbolize_names: true)
 
-			expect(response_body).to have_key(:data)
-			expect(response_body[:data]).to be_an(Hash)
-			expect(response_body[:data]).to be_empty
+			expect(response_body).to have_key(:message)
+			expect(response_body[:message]).to be_a(String)
+			expect(response_body[:message]).to eq("your query could not be completed")
+			expect(response_body).to have_key(:errors)
+			expect(response_body[:errors]).to be_an(Array)
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("must include a name in query.")
+		end
+
+		it "sends a message when parameter is missing" do
+			get "/api/v1/merchants/find"
+
+			expect(response).to have_http_status(400)
+			
+			response_body = JSON.parse(response.body, symbolize_names: true)
+
+			expect(response_body).to have_key(:message)
+			expect(response_body[:message]).to be_a(String)
+			expect(response_body[:message]).to eq("your query could not be completed")
+			expect(response_body).to have_key(:errors)
+			expect(response_body[:errors]).to be_an(Array)
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+
+			expect(response_body[:errors].first[:status]).to eq("400")
+			expect(response_body[:errors].first[:title]).to eq("missing name attribute in query.")
 		end
 	end
 end

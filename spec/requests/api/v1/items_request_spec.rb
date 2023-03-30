@@ -89,11 +89,19 @@ describe "Items API" do
 			expect(response_body).to have_key(:message)
 			expect(response_body[:message]).to be_a(String)
 			expect(response_body[:message]).to eq("your query could not be completed")
-
+			
 			expect(response_body).to have_key(:errors)
 			expect(response_body[:errors]).to be_an(Array)
-			expect(response_body[:errors].first).to be_a(Hash)
-			expect(response_body[:errors].first[:message]).to eq("Couldn't find Item with 'id'=#{item_1.id + 1}")
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+
+			expect(response_body[:errors].first[:status]).to eq("404")
+			expect(response_body[:errors].first[:title]).to eq("Couldn't find Item with 'id'=#{item_1.id + 1}")
 		end
 
 		it "returns status code 404 if string instead of integer id" do
@@ -111,8 +119,16 @@ describe "Items API" do
 
 			expect(response_body).to have_key(:errors)
 			expect(response_body[:errors]).to be_an(Array)
-			expect(response_body[:errors].first).to be_a(Hash)
-			expect(response_body[:errors].first[:message]).to eq("Couldn't find Item with 'id'=string-instead-of-integer")
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+
+			expect(response_body[:errors].first[:status]).to eq("404")
+			expect(response_body[:errors].first[:title]).to eq("Couldn't find Item with 'id'=string-instead-of-integer")
 		end
 	end
 
@@ -165,16 +181,21 @@ describe "Items API" do
 			
 			expect(response_body).to have_key(:errors)
 			expect(response_body[:errors]).to be_an(Array)
+			
+			expect(response_body[:errors].size).to eq(2)
 
-			expect(response_body[:errors].first).to be_a(Hash)
-			expect(response_body[:errors].first).to have_key(:name)
-			expect(response_body[:errors].second).to have_key(:unit_price)
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
 
-			expect(response_body[:errors].first[:name]).to be_an(String)
-			expect(response_body[:errors].first[:name]).to eq("only allows letters and white spaces")
+			expect(response_body[:errors].first[:status]).to eq("404")
+			expect(response_body[:errors].first[:title]).to eq("Name only allows letters and white spaces")
 
-			expect(response_body[:errors].second[:unit_price]).to be_an(String)
-			expect(response_body[:errors].second[:unit_price]).to eq("must be a valid float")
+			expect(response_body[:errors].second[:status]).to eq("404")
+			expect(response_body[:errors].second[:title]).to eq("Unit price must be a valid float")
 		end
 	end
 
@@ -265,10 +286,16 @@ describe "Items API" do
 
 			expect(response_body).to have_key(:errors)
 			expect(response_body[:errors]).to be_an(Array)
-			expect(response_body[:errors].first).to be_a(Hash)
-			expect(response_body[:errors].first).to have_key(:merchant)
-			expect(response_body[:errors].first[:merchant]).to eq("required")
 
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+
+			expect(response_body[:errors].first[:status]).to eq("404")
+			expect(response_body[:errors].first[:title]).to eq("Merchant must exist")
 		end
 
 		it "returns status 404 when a string is used as an id" do
@@ -301,9 +328,13 @@ describe "Items API" do
 
 			response_body[:errors].each do |error|
 				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
 			end
 
-			expect(response_body[:errors].first[:merchant]).to eq("required")
+			expect(response_body[:errors].first[:status]).to eq("404")
+			expect(response_body[:errors].first[:title]).to eq("Merchant must exist")
 		end
 
 		it "returns status 404 when wrong item id used" do
@@ -336,9 +367,13 @@ describe "Items API" do
 
 			response_body[:errors].each do |error|
 				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
 			end
 
-			expect(response_body[:errors].first[:message]).to eq("Couldn't find Item with 'id'=#{Item.last.id + 1}")
+			expect(response_body[:errors].first[:status]).to eq("404")
+			expect(response_body[:errors].first[:title]).to eq("Couldn't find Item with 'id'=#{Item.last.id + 1}")
 		end
 	end
 
@@ -386,10 +421,16 @@ describe "Items API" do
 
 			expect(response_body).to have_key(:errors)
 			expect(response_body[:errors]).to be_an(Array)
-			expect(response_body[:errors].first).to be_a(Hash)
-			expect(response_body[:errors].first).to have_key(:message)
-			expect(response_body[:errors].first[:message]).to be_a(String)
-			expect(response_body[:errors].first[:message]).to eq("Couldn't find Item with 'id'=#{Item.last.id + 1}")
+
+			response_body[:errors].each do |error|
+				expect(error).to be_a(Hash)
+				expect(error.keys).to include(:status, :title)
+				expect(error[:status]).to be_a(String)
+				expect(error[:title]).to be_a(String)
+			end
+
+			expect(response_body[:errors].first[:status]).to eq("404")
+			expect(response_body[:errors].first[:title]).to eq("Couldn't find Item with 'id'=#{Item.last.id + 1}")
 		end
 	end
 end
