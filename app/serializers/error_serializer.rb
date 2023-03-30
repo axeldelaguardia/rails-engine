@@ -29,16 +29,4 @@ class ErrorSerializer
       ]
     }
 	end
-
-	def invalid_search
-		{
-			message: "your query could not be completed",
-      errors: [
-        {
-					status: @status.to_s,
-          title: @object,
-        }
-      ]
-    }
-	end
 end

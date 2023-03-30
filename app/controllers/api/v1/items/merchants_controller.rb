@@ -1,8 +1,4 @@
 class Api::V1::Items::MerchantsController < ApplicationController
-	def index
-		render json: MerchantSerializer.new(Merchant.all)
-	end
-
 	def show
 		begin
 				merchant = Item.find(params[:item_id]).merchant

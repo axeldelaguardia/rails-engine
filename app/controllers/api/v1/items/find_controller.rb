@@ -28,7 +28,7 @@ class Api::V1::Items::FindController < ApplicationController
 		return true if params[:min_price].nil? && params[:max_price].nil?
 		if params[:min_price].nil? && valid_price?(params[:max_price])
 			true
-		elsif valid_price?(params[:max_price]) && params[:min_price].nil?
+		elsif valid_price?(params[:min_price]) && params[:max_price].nil?
 			true
 		elsif !valid_price?(params[:min_price]) || !valid_price?(params[:max_price])
 			raise ValidationException.new "min or max price need to be an integer or a float."
